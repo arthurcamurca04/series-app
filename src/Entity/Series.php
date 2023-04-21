@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\SeriesRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Asserts;
 
 #[ORM\Entity(repositoryClass: SeriesRepository::class)]
 class Series
@@ -15,6 +16,8 @@ class Series
     private int $id;
 
     #[ORM\Column(length: 100, nullable: false)]
+    #[Asserts\NotBlank]
+    #[Asserts\Length(min: 3, minMessage: 'Nome da série deve conter no mínimo 3 caracteres')]
     private string $name;
 
     /**

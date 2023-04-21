@@ -33,8 +33,6 @@ class SeriesController extends AbstractController
     {
         $seriesList = $this->seriesRepository->findAll();
         $session = $request->getSession();
-        $session->remove('success');
-        $session->remove('removed');
         return $this->render('series/series.html.twig', [
             'series' => $seriesList
         ]);
@@ -51,7 +49,7 @@ class SeriesController extends AbstractController
     }
 
     #[Route('/series/create', name: 'series-create', methods: ['POST'])]
-    public function addSeries(Request $request): RedirectResponse
+    public function addSeries(Request $request): Response
     {
         $series = new Series();
         $filledSerie = $this->createForm(SeriesType::class, $series)->handleRequest($request);
@@ -59,10 +57,11 @@ class SeriesController extends AbstractController
         if($filledSerie->isSubmitted() && $filledSerie->isValid()){
             $this->seriesRepository->add($series, true);
             $this->addFlash('success', "Série \"{$series->getName()}\" adicionada com sucesso");
-            return new RedirectResponse('/series', 302);
+            return $this->redirectToRoute('series');
         }
-        $this->addFlash('danger', "Erro ao adicionar série.");
-        return new RedirectResponse('/series', 400);
+        return $this->render('series/form.html.twig', [
+            'seriesForm' => $filledSerie
+        ]);
     }
 
     #[Route('/series/delete/{id}',
@@ -83,9 +82,13 @@ class SeriesController extends AbstractController
     public function editSeriesForm(int $id): Response
     {
         $series = $this->seriesRepository->find($id);
-        $seriesForm = $this->createForm(SeriesType::class, new Series($series->getName()));
+        $seriesForm = $this->createForm(
+            SeriesType::class,
+            new Series($series->getName()),
+            ['is_edit' => true]);
         return $this->render('series/form.html.twig', [
-            'seriesForm' => $seriesForm
+            'seriesForm' => $seriesForm,
+            'series' => $series
         ]);
     }
 
@@ -105,7 +108,7 @@ class SeriesController extends AbstractController
         }
 
         $this->addFlash('danger', "Erro ao editar série.");
-        return new RedirectResponse('/series', 400);
+        return new RedirectResponse('/series', 302);
     }
 
 }

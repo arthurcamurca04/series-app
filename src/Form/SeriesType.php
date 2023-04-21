@@ -19,7 +19,7 @@ class SeriesType extends AbstractType
                 'attr' => ['placeholder' => 'Series Name '],
                 'trim' => true
             ])
-            ->add('save', SubmitType::class, ['label' => 'Add', 'attr' => ['class' => 'btn-outline-primary']])
+            ->add('save', SubmitType::class, ['label' => $options['is_edit'] ? 'Edit' : 'Add'])
         ;
     }
 
@@ -27,6 +27,7 @@ class SeriesType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Series::class,
+            'is_edit' => false
         ]);
     }
 }
