@@ -83,22 +83,29 @@ class SeriesController extends AbstractController
     public function editSeriesForm(int $id): Response
     {
         $series = $this->seriesRepository->find($id);
-
+        $seriesForm = $this->createForm(SeriesType::class, new Series($series->getName()));
         return $this->render('series/form.html.twig', [
-            'series' => $series
+            'seriesForm' => $seriesForm
         ]);
     }
 
     #[Route('/series/edit/{id}', name: 'series-update', requirements: ['id' => '\d+'], methods: ['POST'])]
     public function editSeries(int $id, Request $request): RedirectResponse
     {
-        $serieName = $request->request->get('series');
         $series = $this->seriesRepository->find($id);
-        $series->setName($serieName);
-        $this->seriesRepository->add($series, true);
-        $this->addFlash('info', "Série \"{$series->getName()}\" atualizada");
+        $filledSeries = $this->createForm(SeriesType::class, $series)
+            ->handleRequest($request);
 
-        return new RedirectResponse('/series', 302);
+        if($filledSeries->isSubmitted() && $filledSeries->isValid()){
+            $series->setName($series->getName());
+            $this->seriesRepository->add($series, true);
+            $this->addFlash('info', "Série \"{$series->getName()}\" atualizada");
+
+            return new RedirectResponse('/series', 302);
+        }
+
+        $this->addFlash('danger', "Erro ao editar série.");
+        return new RedirectResponse('/series', 400);
     }
 
 }
