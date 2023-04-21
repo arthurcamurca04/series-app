@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ series is defined ? 'Edit' : 'Add' }} series{% endblock %}
+
+{% block body %}
+    <h1>{{ series is defined ? 'Edit' : 'Add' }} your favorite TV series</h1>
+    <div class="row">
+        <div class="col-4">
+            {{ form(seriesForm) }}
+        </div>
+    </div>
+{#    <form class="row" method="post" action="{{ series is defined ? path('series-update', {id:series.id}) : path('series-create') }}">#}
+{#        <div class="col-auto">#}
+{#            <label class="visually-hidden" for="series">Series name: </label>#}
+{#            <input#}
+{#                    class="form-control"#}
+{#                    type="text" name="series"#}
+{#                    id="series"#}
+{#                    placeholder="Series Name"#}
+{#                    value="{{ series is defined ? series.name : '' }}"#}
+{#            >#}
+{#        </div>#}
+{#        <div class="col-auto">#}
+{#            <button class="btn btn-primary mb-3" type="submit">{{ series is defined ? 'Edit' : 'Save' }}</button>#}
+{#        </div>#}
+{#    </form>#}
+{% endblock %}
+
