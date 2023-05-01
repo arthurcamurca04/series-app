@@ -22,7 +22,11 @@ class Series
     #[Asserts\Length(min: 3, minMessage: 'Nome da série deve conter no mínimo 3 caracteres')]
     private string $name;
 
-    #[ORM\OneToMany(mappedBy: 'series', targetEntity: Season::class, orphanRemoval: true)]
+    #[ORM\OneToMany(
+        mappedBy: 'series',
+        targetEntity: Season::class,
+        cascade: ['remove'],
+        orphanRemoval: true)]
     private Collection $seasons;
 
     /**

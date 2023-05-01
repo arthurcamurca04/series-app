@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Episode
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
     #[ORM\Column]
     private int $id;
 
@@ -20,6 +20,14 @@ class Episode
     #[ORM\ManyToOne(inversedBy: 'episodes')]
     #[ORM\JoinColumn(nullable: false)]
     private Season $season;
+
+    /**
+     * @param int $number
+     */
+    public function __construct(int $number)
+    {
+        $this->number = $number;
+    }
 
     public function getId(): int
     {

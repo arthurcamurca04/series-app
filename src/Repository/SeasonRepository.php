@@ -3,7 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\Season;
+use App\Entity\Series;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -39,28 +41,20 @@ class SeasonRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return Season[] Returns an array of Season objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('s')
-//            ->andWhere('s.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('s.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?Season
-//    {
-//        return $this->createQueryBuilder('s')
-//            ->andWhere('s.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    /**
+     * @return Season[] Returns an array of Season objects
+     */
+    public function findBySeriesId($id): array
+    {
+        return $this->createQueryBuilder('season')
+            ->innerJoin(Series::class, 'serie',
+                Join::WITH, 'serie.id = season.series')
+            ->where('serie.id = :id')
+            ->setParameter('id', $id)
+            ->orderBy('serie.id', 'ASC')
+            ->setMaxResults(25)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }

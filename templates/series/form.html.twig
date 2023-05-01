@@ -14,6 +14,12 @@
             {{ form_row(seriesForm.name) }}
         </div>
         <div class="col">
+            {{ form_row(seriesForm.seasonsQuantity) }}
+        </div>
+        <div class="col">
+            {{ form_row(seriesForm.episodesQuantity) }}
+        </div>
+        <div class="col">
             {{ form_widget(seriesForm.save, {'attr': {'class': 'btn-dark'}}) }}
         </div>
     </div>

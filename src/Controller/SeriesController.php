@@ -2,9 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\Episode;
+use App\Entity\Season;
 use App\Entity\Series;
 use App\Form\SeriesType;
 use App\Repository\SeriesRepository;
+use App\SeriesInputDto;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -41,7 +44,7 @@ class SeriesController extends AbstractController
     #[Route('/series/create', name: 'series-create-form', methods: ['GET'])]
     public function addSeriesForm(): Response
     {
-        $seriesForm = $this->createForm(SeriesType::class, new Series(''));
+        $seriesForm = $this->createForm(SeriesType::class, new SeriesInputDto());
 
         return $this->render('series/form.html.twig', [
             'seriesForm' => $seriesForm
@@ -51,12 +54,12 @@ class SeriesController extends AbstractController
     #[Route('/series/create', name: 'series-create', methods: ['POST'])]
     public function addSeries(Request $request): Response
     {
-        $series = new Series();
-        $filledSerie = $this->createForm(SeriesType::class, $series)->handleRequest($request);
+        $input = new SeriesInputDto();
+        $filledSerie = $this->createForm(SeriesType::class, $input)->handleRequest($request);
 
         if($filledSerie->isSubmitted() && $filledSerie->isValid()){
-            $this->seriesRepository->add($series, true);
-            $this->addFlash('success', "Série \"{$series->getName()}\" adicionada com sucesso");
+            $this->seriesRepository->add($input, true);
+            $this->addFlash('success', "Série \"{$input->getName()}\" adicionada com sucesso");
             return $this->redirectToRoute('series');
         }
         return $this->render('series/form.html.twig', [
@@ -86,10 +89,6 @@ class SeriesController extends AbstractController
             SeriesType::class,
             new Series($series->getName()),
             ['is_edit' => true]);
-        return $this->render('series/form.html.twig', [
-            'seriesForm' => $seriesForm,
-            'series' => $series
-        ]);
     }
 
     #[Route('/series/edit/{id}', name: 'series-update', requirements: ['id' => '\d+'], methods: ['POST'])]
