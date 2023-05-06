@@ -2,16 +2,12 @@
 
 namespace App\Controller;
 
-use App\Entity\Episode;
-use App\Entity\Season;
 use App\Entity\Series;
 use App\Form\SeriesType;
 use App\Repository\SeriesRepository;
 use App\SeriesInputDto;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -35,7 +31,7 @@ class SeriesController extends AbstractController
     public function index(Request $request): Response
     {
         $seriesList = $this->seriesRepository->findAll();
-        $session = $request->getSession();
+
         return $this->render('series/series.html.twig', [
             'series' => $seriesList
         ]);
@@ -62,6 +58,7 @@ class SeriesController extends AbstractController
             $this->addFlash('success', "Série \"{$input->getName()}\" adicionada com sucesso");
             return $this->redirectToRoute('series');
         }
+
         return $this->render('series/form.html.twig', [
             'seriesForm' => $filledSerie
         ]);
@@ -81,7 +78,10 @@ class SeriesController extends AbstractController
         return new RedirectResponse('/series', 302);
     }
 
-    #[Route('/series/edit/{id}', name: 'series-update-form', requirements: ['id' => '\d+'], methods: ['GET'])]
+    #[Route('/series/edit/{id}',
+        name: 'series-update-form',
+        requirements: ['id' => '\d+'],
+        methods: ['GET'])]
     public function editSeriesForm(int $id): Response
     {
         $series = $this->seriesRepository->find($id);
@@ -91,7 +91,10 @@ class SeriesController extends AbstractController
             ['is_edit' => true]);
     }
 
-    #[Route('/series/edit/{id}', name: 'series-update', requirements: ['id' => '\d+'], methods: ['POST'])]
+    #[Route('/series/edit/{id}',
+        name: 'series-update',
+        requirements: ['id' => '\d+'],
+        methods: ['POST'])]
     public function editSeries(int $id, Request $request): RedirectResponse
     {
         $series = $this->seriesRepository->find($id);
@@ -107,6 +110,7 @@ class SeriesController extends AbstractController
         }
 
         $this->addFlash('danger', "Erro ao editar série.");
+
         return new RedirectResponse('/series', 302);
     }
 
