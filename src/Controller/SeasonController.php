@@ -9,6 +9,8 @@ use App\Repository\SeriesRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
 class SeasonController extends AbstractController
 {
@@ -16,26 +18,45 @@ class SeasonController extends AbstractController
     private SeasonRepository $seasonRepository;
     private SeriesRepository $seriesRepository;
 
+    private CacheInterface $cache;
+
     /**
      * @param SeasonRepository $seasonRepository
      */
     public function __construct(
         SeasonRepository $seasonRepository,
-        SeriesRepository $seriesRepository
+        SeriesRepository $seriesRepository,
+        CacheInterface $cache
     )
     {
         $this->seasonRepository = $seasonRepository;
         $this->seriesRepository = $seriesRepository;
+        $this->cache = $cache;
     }
 
     #[Route('/series/{id}/season', name: 'app_season')]
     public function index($id): Response
     {
-        /** @var Season $seasons */
-        $seasons = $this->seasonRepository->findBySeriesId($id);
+        $seasons = $this->cache->get("season + {$id}",
+            function (ItemInterface $item) use ($id){
+                $item->expiresAfter(10);
 
-        /** @var Series $serie */
-        $serie = $this->seriesRepository->findOneBy(['id'=>$id]);
+                /** @var Season $seasons */
+                $seasons = $this->seasonRepository->findBySeriesId($id);
+
+                return $seasons;
+        });
+
+        $serie = $this->cache->get("serie + {$id}",
+            function (ItemInterface $item) use ($id){
+                $item->expiresAfter(10);
+
+                /** @var Series $serie */
+                $serie = $this->seriesRepository->findOneBy(['id'=>$id]);
+
+                return $serie;
+            }
+        );
 
         return $this->render('season/index.html.twig', [
             'seasons' => $seasons,
