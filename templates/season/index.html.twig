@@ -5,9 +5,10 @@
 {% block body %}
         <h1>Seasons of the Serie "{{ serie }}"</h1>
         <ul class="list-group">
-            {% for season in seasons %}
-                <li class="list-group-item d-flex justify-content-between align-items-center">Season {{ season.number }}
-                        <span class="badge bg-dark">{{ season.episodes|length }}</span>
+            {% for s in seasons %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <a href={{ path("app_episode", {id: s.id}) }}>Season {{ s.number }}</a>
+                        <span class="badge bg-dark">{{ s.episodes|length }}</span>
                 </li>
             {% endfor %}
         </ul>
