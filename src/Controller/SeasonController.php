@@ -63,10 +63,12 @@ class SeasonController extends AbstractController
                 return $serie;
             }
         );
+        $userLogged = $this->getUser();
 
         return $this->render('season/index.html.twig', [
             'seasons' => $seasons,
-            'serie' => $serie->getName()
+            'serie' => $serie->getName(),
+            'userLogged' => $userLogged
         ]);
     }
 }

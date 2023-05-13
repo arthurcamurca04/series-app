@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Registre-se!{% endblock %}</title>
+    <link rel="stylesheet" href="{{ asset('build/style.css') }}">
+</head>
+<body>
+    <div class="container rounded-3 p-5 w-75 mt-5 bg-black bg-opacity-10">
+        <h1>Cadastre-se</h1>
+
+        {{ form_start(registrationForm) }}
+        {{ form_row(registrationForm.email) }}
+        {{ form_row(registrationForm.plainPassword, {
+            label: 'Senha'
+        }) }}
+
+        <button type="submit" class="btn btn-success">Registrar-se</button>
+        <a class="btn btn-primary" href="{{ path('app_login') }}">Login</a>
+        {{ form_end(registrationForm) }}
+    </div>
+</body>
+</html>
+
+

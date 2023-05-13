@@ -6,6 +6,15 @@
         <link rel="stylesheet" href="{{ asset('build/style.css') }}">
     </head>
     <body>
+        <div class="container-fluid bg-black d-flex justify-content-between align-items-end">
+            <nav class="navbar navbar-brand">
+                <a class="link-light nav-link" href="{{ path('series') }}">Home</a>
+            </nav>
+            <div class="d-flex justify-content-between align-items-end">
+                <span class="text-light me-lg-3">{{ userLogged.userIdentifier }} </span>
+                <a class="link-light nav-link" href={{ path('app_logout') }}>Logout</a>
+            </div>
+        </div>
         <div class="container">
             {% block body %}{% endblock %}
         </div>

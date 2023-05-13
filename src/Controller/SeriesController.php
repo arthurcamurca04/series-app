@@ -31,9 +31,11 @@ class SeriesController extends AbstractController
     public function index(Request $request): Response
     {
         $seriesList = $this->seriesRepository->findAll();
+        $userLogged = $this->getUser();
 
         return $this->render('series/series.html.twig', [
-            'series' => $seriesList
+            'series' => $seriesList,
+            'userLogged' => $userLogged
         ]);
     }
 
@@ -41,9 +43,11 @@ class SeriesController extends AbstractController
     public function addSeriesForm(): Response
     {
         $seriesForm = $this->createForm(SeriesType::class, new SeriesInputDto());
+        $userLogged = $this->getUser();
 
         return $this->render('series/form.html.twig', [
-            'seriesForm' => $seriesForm
+            'seriesForm' => $seriesForm,
+            'userLogged' => $userLogged
         ]);
     }
 

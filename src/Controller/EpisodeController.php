@@ -38,10 +38,12 @@ class EpisodeController extends AbstractController
         /** @var Season $season */
         $season = $this->seasonRepository->find($id);
         $episodes = $this->episodeRepository->findBy(['season'=>$season], ['id'=>'ASC']);
+        $userLogged = $this->getUser();
 
         return $this->render('episode/index.html.twig', [
             'episodes' => $episodes,
-            'seasonId' => $season->getNumber()
+            'seasonId' => $season->getNumber(),
+            'userLogged' => $userLogged
         ]);
     }
 
