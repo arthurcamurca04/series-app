@@ -6,6 +6,7 @@ use App\Entity\Season;
 use App\Entity\Series;
 use App\Repository\SeasonRepository;
 use App\Repository\SeriesRepository;
+use Psr\Cache\InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -22,6 +23,8 @@ class SeasonController extends AbstractController
 
     /**
      * @param SeasonRepository $seasonRepository
+     * @param SeriesRepository $seriesRepository
+     * @param CacheInterface $cache
      */
     public function __construct(
         SeasonRepository $seasonRepository,
@@ -34,6 +37,9 @@ class SeasonController extends AbstractController
         $this->cache = $cache;
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     #[Route('/series/{id}/season', name: 'app_season')]
     public function index($id): Response
     {
