@@ -55,16 +55,16 @@ class SeriesController extends AbstractController
     public function addSeries(Request $request): Response
     {
         $input = new SeriesInputDto();
-        $filledSerie = $this->createForm(SeriesType::class, $input)->handleRequest($request);
+        $filledSeries = $this->createForm(SeriesType::class, $input)->handleRequest($request);
 
-        if($filledSerie->isSubmitted() && $filledSerie->isValid()){
+        if($filledSeries->isSubmitted() && $filledSeries->isValid()){
             $this->seriesRepository->add($input, true);
             $this->addFlash('success', "Série \"{$input->getName()}\" adicionada com sucesso");
             return $this->redirectToRoute('series');
         }
 
         return $this->render('series/form.html.twig', [
-            'seriesForm' => $filledSerie
+            'seriesForm' => $filledSeries
         ]);
     }
 
