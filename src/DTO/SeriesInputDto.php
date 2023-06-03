@@ -1,11 +1,19 @@
 <?php
 
-namespace App;
+namespace App\DTO;
 
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints as Asserts;
 class SeriesInputDto
 {
+    #[Asserts\NotBlank]
+    #[Asserts\Length(min: 3, minMessage: 'Nome da série deve conter no mínimo 3 caracteres')]
     private string $name;
+
+    #[Asserts\Positive]
     private int $seasonsQuantity;
+
+    #[Asserts\Positive]
     private int $episodesQuantity;
 
     /**

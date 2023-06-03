@@ -5,7 +5,7 @@ namespace App\Controller;
 use App\Entity\Series;
 use App\Form\SeriesType;
 use App\Repository\SeriesRepository;
-use App\SeriesInputDto;
+use App\DTO\SeriesInputDto;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;

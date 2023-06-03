@@ -2,9 +2,9 @@
 
 namespace App\Repository;
 
+use App\DTO\SeriesInputDto;
 use App\Entity\Season;
 use App\Entity\Series;
-use App\SeriesInputDto;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Exception;
 use Doctrine\Persistence\ManagerRegistry;
@@ -12,11 +12,17 @@ use Doctrine\Persistence\ManagerRegistry;
 class SeriesRepository extends ServiceEntityRepository
 {
     private SeasonRepository $seasonRepository;
+    private EpisodesRepository $episodesRepository;
 
-    public function __construct(ManagerRegistry $registry, SeasonRepository $seasonRepository)
+    public function __construct(
+        ManagerRegistry $registry,
+        SeasonRepository $seasonRepository,
+        EpisodesRepository $episodesRepository
+    )
     {
         parent::__construct($registry, Series::class);
         $this->seasonRepository = $seasonRepository;
+        $this->episodesRepository = $episodesRepository;
     }
 
     /**
@@ -49,6 +55,19 @@ class SeriesRepository extends ServiceEntityRepository
     public function delete(Series $series, bool $flush = false): void
     {
         $em = $this->getEntityManager();
+
+        $seasons = $this->seasonRepository->findBy(["series" => $series->getId()]);
+
+        foreach ($seasons as $season) {
+            $episodes = $this->episodesRepository->findBy(["season" => $season->getId()]);
+
+            foreach ($episodes as $episode) {
+                $this->episodesRepository->remove($episode);
+            }
+
+            $this->seasonRepository->remove($season);
+        }
+
         $em->remove($series);
 
         if ($flush){
@@ -59,14 +78,15 @@ class SeriesRepository extends ServiceEntityRepository
     /**
      * @throws Exception
      */
-    private function addEpisodePerSeason(int $season_id, int $epQuantity)
+    private function addEpisodePerSeason(int $season_id, int $epQuantity): void
     {
         $db = $this->getEntityManager()->getConnection();
         for($j = 1; $j <= $epQuantity; $j++){
-            $query = "INSERT INTO Episode (season_id, number) VALUES (:season_id, :number)";
+            $query = "INSERT INTO Episode (season_id, number, watched) VALUES (:season_id, :number, :watched)";
             $stmt = $db->prepare($query);
             $stmt->bindValue('season_id', $season_id);
             $stmt->bindValue('number', $j);
+            $stmt->bindValue('watched', 0);
 
             $stmt->executeStatement();
         }
@@ -75,14 +95,14 @@ class SeriesRepository extends ServiceEntityRepository
     /**
      * @throws Exception
      */
-    private function addSeason(int $series_id, int $seasonQuantity)
+    private function addSeason(int $series_id, int $seasonQuantity): void
     {
         $db = $this->getEntityManager()->getConnection();
 
-        $query = "INSERT INTO Season (series_id,number) VALUES (:series_id, :number)";
-        $stmt = $db->prepare($query);
-        $stmt->bindValue('series_id', $series_id);
         for($i = 1; $i <= $seasonQuantity; $i++){
+            $query = "INSERT INTO Season (series_id,number) VALUES (:series_id, :number)";
+            $stmt = $db->prepare($query);
+            $stmt->bindValue('series_id', $series_id);
             $stmt->bindValue('number', $i);
             $stmt->executeStatement();
         }

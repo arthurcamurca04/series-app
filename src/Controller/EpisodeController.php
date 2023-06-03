@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Episode;
 use App\Entity\Season;
-use App\Repository\EpisodeRepository;
+use App\Repository\EpisodesRepository;
 use App\Repository\SeasonRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -14,13 +14,13 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class EpisodeController extends AbstractController
 {
-    private EpisodeRepository $episodeRepository;
+    private EpisodesRepository $episodeRepository;
 
     private SeasonRepository $seasonRepository;
 
     public function __construct(
-        EpisodeRepository $episodeRepository,
-        SeasonRepository $seasonRepository
+        EpisodesRepository $episodeRepository,
+        SeasonRepository   $seasonRepository
     )
     {
         $this->episodeRepository = $episodeRepository;

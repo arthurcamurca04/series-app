@@ -2,8 +2,7 @@
 
 namespace App\Form;
 
-use App\Entity\Series;
-use App\SeriesInputDto;
+use App\DTO\SeriesInputDto;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;

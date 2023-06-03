@@ -2,11 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\EpisodeRepository;
+use App\Repository\EpisodesRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: EpisodeRepository::class)]
+#[ORM\Entity(repositoryClass: EpisodesRepository::class)]
 class Episode
 {
     #[ORM\Id]
