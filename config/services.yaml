@@ -1,5 +1,5 @@
 parameters:
-
+    cover_image_directory: '%kernel.project_dir%/public/uploads/cover_image'
 services:
 
     _defaults:

@@ -8,21 +8,25 @@ use App\Entity\Series;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Exception;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class SeriesRepository extends ServiceEntityRepository
 {
     private SeasonRepository $seasonRepository;
     private EpisodesRepository $episodesRepository;
+    private ParameterBagInterface $parameterBag;
 
     public function __construct(
         ManagerRegistry $registry,
         SeasonRepository $seasonRepository,
-        EpisodesRepository $episodesRepository
+        EpisodesRepository $episodesRepository,
+        ParameterBagInterface $parameterBag,
     )
     {
         parent::__construct($registry, Series::class);
         $this->seasonRepository = $seasonRepository;
         $this->episodesRepository = $episodesRepository;
+        $this->parameterBag = $parameterBag;
     }
 
     /**
@@ -31,6 +35,11 @@ class SeriesRepository extends ServiceEntityRepository
     {
         $em = $this->getEntityManager();
         $serie = new Series($seriesInputDto->getName());
+
+        if ($seriesInputDto->getCoverImage() !== null) {
+            $serie->setCoverImagePath($seriesInputDto->getCoverImage());
+        }
+
         $em->persist($serie);
         if ($flush){
             $em->flush();
@@ -72,6 +81,13 @@ class SeriesRepository extends ServiceEntityRepository
 
         if ($flush){
             $em->flush();
+        }
+
+        if ($series->getCoverImagePath()){
+            unlink(
+                $this->parameterBag->get('cover_image_directory') .
+                DIRECTORY_SEPARATOR .
+                $series->getCoverImagePath());
         }
     }
 

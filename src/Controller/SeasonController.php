@@ -53,6 +53,7 @@ class SeasonController extends AbstractController
                 return $seasons;
         });
 
+        /** @var Series $serie */
         $serie = $this->cache->get("serie + {$id}",
             function (ItemInterface $item) use ($id){
                 $item->expiresAfter(10);
@@ -68,6 +69,7 @@ class SeasonController extends AbstractController
         return $this->render('season/index.html.twig', [
             'seasons' => $seasons,
             'serie' => $serie->getName(),
+            'coverImage' => $serie->getCoverImagePath() !== null ? $serie->getCoverImagePath() : null,
             'userLogged' => $userLogged
         ]);
     }

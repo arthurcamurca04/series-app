@@ -7,24 +7,30 @@ use App\Form\SeriesType;
 use App\Repository\SeriesRepository;
 use App\DTO\SeriesInputDto;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Exception\ORMException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 class SeriesController extends AbstractController
 {
     private SeriesRepository $seriesRepository;
     private EntityManagerInterface $entityManager;
+    private SluggerInterface $slugger;
 
     public function __construct(
         SeriesRepository $seriesRepository,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        SluggerInterface $slugger
     )
     {
         $this->seriesRepository = $seriesRepository;
         $this->entityManager = $entityManager;
+        $this->slugger = $slugger;
     }
 
     #[Route('/series', name: 'series', methods: ['GET'])]
@@ -57,24 +63,52 @@ class SeriesController extends AbstractController
         $input = new SeriesInputDto();
         $filledSeries = $this->createForm(SeriesType::class, $input)->handleRequest($request);
 
-        if($filledSeries->isSubmitted() && $filledSeries->isValid()){
+        if (!$filledSeries->isValid()) {
+            return $this->render('series/form.html.twig', [
+                'seriesForm' => $filledSeries,
+                'userLogged' => $this->getUser()
+            ]);
+        }
+
+        /** @var UploadedFile $uploadedCoverImage */
+        $uploadedCoverImage = $filledSeries->get('coverImage')->getData();
+
+        if ($uploadedCoverImage) {
+            $originalFileName = pathinfo($uploadedCoverImage->getClientOriginalName(), PATHINFO_FILENAME);
+
+            $safeFileName = $this->slugger->slug($originalFileName);
+            $newFileName = $safeFileName . '-' . uniqid() . '.' . $uploadedCoverImage->guessExtension();
+
+            $uploadedCoverImage->move(
+                $this->getParameter('cover_image_directory'),
+                $newFileName
+            );
+
+            $input->setCoverImage($newFileName);
+        };
+
+        if($filledSeries->isSubmitted()){
             $this->seriesRepository->add($input, true);
             $this->addFlash('success', "Série \"{$input->getName()}\" adicionada com sucesso");
             return $this->redirectToRoute('series');
         }
 
         return $this->render('series/form.html.twig', [
-            'seriesForm' => $filledSeries
+            'seriesForm' => $filledSeries,
+            'userLogged' => $this->getUser()
         ]);
     }
 
+    /**
+     * @throws ORMException
+     */
     #[Route('/series/delete/{id}',
         name: 'series-delete',
         requirements: ['id' => '\d+'],
         methods: ['DELETE'])]
-    public function deleteSeries(int $id, Request $request): RedirectResponse
+    public function deleteSeries(int $id): RedirectResponse
     {
-        $series = $this->entityManager->getPartialReference(Series::class, $id);
+        $series = $this->entityManager->getReference(Series::class, $id);
         $this->seriesRepository->delete($series, true);
 
         $this->addFlash('danger', 'Série removida.');

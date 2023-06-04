@@ -2,7 +2,6 @@
 
 namespace App\DTO;
 
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints as Asserts;
 class SeriesInputDto
 {
@@ -16,20 +15,26 @@ class SeriesInputDto
     #[Asserts\Positive]
     private int $episodesQuantity;
 
+    #[Asserts\File(mimeTypes: 'image/*')]
+    private ?string $coverImage;
+
     /**
      * @param string $seriesName
      * @param int $seasonsQuantity
      * @param int $episodesQuantity
+     * @param string|null $coverImage
      */
     public function __construct(
         string $seriesName = '',
         int $seasonsQuantity = 0,
-        int $episodesQuantity = 0
+        int $episodesQuantity = 0,
+        string $coverImage = null
     )
     {
         $this->name = $seriesName;
         $this->seasonsQuantity = $seasonsQuantity;
         $this->episodesQuantity = $episodesQuantity;
+        $this->coverImage = $coverImage;
     }
 
     /**
@@ -78,5 +83,21 @@ class SeriesInputDto
     public function setEpisodesQuantity(int $episodesQuantity): void
     {
         $this->episodesQuantity = $episodesQuantity;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getCoverImage(): ?string
+    {
+        return $this->coverImage;
+    }
+
+    /**
+     * @param string $coverImage
+     */
+    public function setCoverImage(string $coverImage): void
+    {
+        $this->coverImage = $coverImage;
     }
 }

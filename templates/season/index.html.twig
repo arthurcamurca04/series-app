@@ -4,6 +4,14 @@
 
 {% block body %}
         <h1>Seasons of the Serie "{{ serie }}"</h1>
+
+        {% if coverImage  %}
+                <img alt="Image de capa da serie {{ serie }}"
+                     class="img-fluid mb-2"
+                     src={{ asset('uploads/cover_image/') ~ coverImage }}
+                >
+        {% endif %}
+        
         <ul class="list-group">
             {% for s in seasons %}
                 <li class="list-group-item d-flex justify-content-between align-items-center">

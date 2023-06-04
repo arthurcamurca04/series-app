@@ -16,13 +16,24 @@
     <ul class="list-group">
         {% for serie in series %}
             <li class="list-group-item d-flex justify-content-between align-items-center">
-                <a href={{ path("app_season", {id:serie.id}) }}>{{ serie.name|e }}</a>
+                <div>
+                    {% if serie.coverImagePath  %}
+                        <img alt="Image de capa da serie {{ serie.name|e }}"
+                             class="img-thumbnail me-2"
+                             width="100"
+                             src={{ asset('uploads/cover_image/') ~ serie.coverImagePath }}
+                        >
+                    {% endif %}
+                    <a href={{ path("app_season", {id:serie.id}) }}>{{ serie.name|e }}</a>
+                </div>
                 <form method="post" action={{ path('series-delete', {id:serie.id}) }}>
                     <input type="hidden" name="_method" value="DELETE">
 
                     <div class="d-flex">
-                        <a href="{{ path("series-update-form", {id:serie.id})}}" class="btn btn-sm btn-primary me-1">E</a>
-                        <button class="btn btn-sm btn-danger">x</button>
+                        <a href="{{ path("series-update-form", {id:serie.id})}}" class="btn btn-sm btn-primary me-1">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </a>
+                        <button class="btn btn-sm btn-danger"><i class="fa-solid fa-trash-can"></i></button>
                     </div>
                 </form>
             </li>

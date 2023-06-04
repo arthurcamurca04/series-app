@@ -22,6 +22,9 @@ class Series
     #[Asserts\Length(min: 3, minMessage: 'Nome da série deve conter no mínimo 3 caracteres')]
     private string $name;
 
+    #[ORM\Column(length: 100, nullable: true)]
+    private ?string $coverImagePath = null;
+
     #[ORM\OneToMany(
         mappedBy: 'series',
         targetEntity: Season::class,
@@ -32,7 +35,7 @@ class Series
     /**
      * @param string $name
      */
-    public function __construct(string $name = '')
+    public function __construct(string $name)
     {
         $this->name = $name;
         $this->seasons = new ArrayCollection();
@@ -88,6 +91,25 @@ class Series
                 $season->setSeries(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getCoverImagePath(): ?string
+    {
+        return $this->coverImagePath;
+    }
+
+    /**
+     * @param string $coverImagePath
+     * @return Series
+     */
+    public function setCoverImagePath(string $coverImagePath): self
+    {
+        $this->coverImagePath = $coverImagePath;
 
         return $this;
     }

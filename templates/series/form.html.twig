@@ -10,19 +10,11 @@
     </div>
 
     <div class="row align-items-center">
-        <div class="col">
             {{ form_row(seriesForm.name) }}
-        </div>
-        <div class="col">
             {{ form_row(seriesForm.seasonsQuantity) }}
-        </div>
-        <div class="col">
             {{ form_row(seriesForm.episodesQuantity) }}
-        </div>
-        <div class="col">
-            {{ form_widget(seriesForm.save, {'attr': {'class': 'btn-dark'}}) }}
-        </div>
-    </div>
+            {{ form_row(seriesForm.coverImage) }}
+            {{ form_widget(seriesForm.save, {'attr': {'class': 'btn-dark'}}) }}    </div>
     {{ form_end(seriesForm) }}
 {% endblock %}
 
