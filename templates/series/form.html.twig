@@ -1,9 +1,9 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ series is defined ? 'Edit' : 'Add'}} series{% endblock %}
+{% block title %}{{ series is defined ? 'Editar' : 'Adicionar'}} series{% endblock %}
 
 {% block body %}
-    <h1>{{ series is defined ? 'Edit' : 'Add'}} your favorite TV series</h1>
+    <h1>{{ series is defined ? 'Editar' : 'Adicionar'}} sua série favorita</h1>
     {{ form_start(seriesForm) }}
     <div class="my-custom-class-for-errors">
         {{ form_errors(seriesForm) }}

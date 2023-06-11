@@ -15,22 +15,26 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SeriesController extends AbstractController
 {
     private SeriesRepository $seriesRepository;
     private EntityManagerInterface $entityManager;
     private SluggerInterface $slugger;
+    private TranslatorInterface $translator;
 
     public function __construct(
         SeriesRepository $seriesRepository,
         EntityManagerInterface $entityManager,
-        SluggerInterface $slugger
+        SluggerInterface $slugger,
+        TranslatorInterface $translator
     )
     {
         $this->seriesRepository = $seriesRepository;
         $this->entityManager = $entityManager;
         $this->slugger = $slugger;
+        $this->translator = $translator;
     }
 
     #[Route('/series', name: 'series', methods: ['GET'])]
@@ -111,9 +115,9 @@ class SeriesController extends AbstractController
         $series = $this->entityManager->getReference(Series::class, $id);
         $this->seriesRepository->delete($series, true);
 
-        $this->addFlash('danger', 'Série removida.');
+        $this->addFlash('danger', $this->translator->trans('series.delete'));
 
-        return new RedirectResponse('/series', 302);
+        return $this->redirectToRoute('series');
     }
 
     #[Route('/series/edit/{id}',
@@ -127,6 +131,8 @@ class SeriesController extends AbstractController
             SeriesType::class,
             new Series($series->getName()),
             ['is_edit' => true]);
+
+        return $this->redirectToRoute('series');
     }
 
     #[Route('/series/edit/{id}',
@@ -144,12 +150,12 @@ class SeriesController extends AbstractController
             $this->seriesRepository->add($series, true);
             $this->addFlash('info', "Série \"{$series->getName()}\" atualizada");
 
-            return new RedirectResponse('/series', 302);
+            return $this->redirectToRoute('series');
         }
 
         $this->addFlash('danger', "Erro ao editar série.");
 
-        return new RedirectResponse('/series', 302);
+        return $this->redirectToRoute('series');
     }
 
 }

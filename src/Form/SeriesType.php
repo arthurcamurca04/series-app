@@ -19,17 +19,17 @@ class SeriesType extends AbstractType
         $builder
             ->add('name', TextType::class, [
                 'label' => ' ',
-                'attr' => ['placeholder' => 'Series Name '],
+                'attr' => ['placeholder' => 'Nome da série '],
                 'trim' => true
             ])
             ->add('seasonsQuantity', NumberType::class, [
                 'label' => ' ',
-                'attr' => ['placeholder' => 'Seasons Quantity '],
+                'attr' => ['placeholder' => 'Quantidade de temporadas '],
                 'trim' => true
             ])
             ->add('episodesQuantity', NumberType::class, [
                 'label' => ' ',
-                'attr' => ['placeholder' => 'Episodes per Season '],
+                'attr' => ['placeholder' => 'Episódios por temporada '],
                 'trim' => true
             ])
             ->add('coverImage', FileType::class, [
@@ -43,7 +43,7 @@ class SeriesType extends AbstractType
                 ],
                 'required' =>  false
             ])
-            ->add('save', SubmitType::class, ['label' => $options['is_edit'] ? 'Edit' : 'Add'])
+            ->add('save', SubmitType::class, ['label' => $options['is_edit'] ? 'Editar' : 'Adicionar'])
         ;
     }
 
